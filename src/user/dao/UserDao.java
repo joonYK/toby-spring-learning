@@ -2,9 +2,12 @@ package user.dao;
 
 import user.domain.User;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class UserDao {
+public abstract class UserDao {
 
     public void add(User user) throws ClassNotFoundException, SQLException {
         Connection c = getConnection();
@@ -41,13 +44,10 @@ public class UserDao {
 
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        return DriverManager.getConnection("jdbc:mysql://localhost/toby_spring_learning?serverTimezone=UTC", "root", "1234");
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
+        UserDao dao = new NUserDao();
 
         User user = new User();
         user.setId("whiteship");
