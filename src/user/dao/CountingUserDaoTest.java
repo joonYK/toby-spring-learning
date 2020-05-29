@@ -6,11 +6,11 @@ import user.domain.User;
 
 import java.sql.SQLException;
 
-public class UserDaoTest {
+public class CountingUserDaoTest {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-        UserDao dao = context.getBean("userDao", UserDao.class);
+        UserDao dao = context.getBean("countingUserDao", UserDao.class);;
 
         User user = new User();
         user.setId("whiteship");
@@ -26,6 +26,9 @@ public class UserDaoTest {
         System.out.println(user2.getPassword());
 
         System.out.println(user2.getId() + " 조회 성공");
+
+        CountingConnectionMaker ccm = context.getBean("connectionMaker", CountingConnectionMaker.class);
+        System.out.println("Connection counter : " + ccm.getCounter());
     }
 
 }

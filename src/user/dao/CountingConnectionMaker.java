@@ -3,12 +3,12 @@ package user.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class CountingConnectionMarker implements ConnectionMaker {
+public class CountingConnectionMaker implements ConnectionMaker {
 
     private int counter = 0;
     private ConnectionMaker realConnectionMarker;
 
-    public CountingConnectionMarker(ConnectionMaker realConnectionMarker) {
+    public CountingConnectionMaker(ConnectionMaker realConnectionMarker) {
         this.realConnectionMarker = realConnectionMarker;
     }
 
