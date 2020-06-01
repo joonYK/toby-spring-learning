@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class CountingUserDaoTest {
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws SQLException {
         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
         UserDao dao = context.getBean("countingUserDao", UserDao.class);;
 
@@ -27,7 +27,7 @@ public class CountingUserDaoTest {
 
         System.out.println(user2.getId() + " 조회 성공");
 
-        CountingConnectionMaker ccm = context.getBean("countingConnectionMaker", CountingConnectionMaker.class);
+        CountingDataSource ccm = context.getBean("countingDataSource", CountingDataSource.class);
         System.out.println("Connection counter : " + ccm.getCounter());
     }
 
