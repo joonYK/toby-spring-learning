@@ -3,7 +3,6 @@ package user.dao;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import user.domain.User;
@@ -17,12 +16,16 @@ public class UserDaoTest {
         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
         UserDao dao = context.getBean("userDao", UserDao.class);
 
+        dao.deleteAll();
+        Assert.assertThat(dao.getCount(), CoreMatchers.is(0));
+
         User user = new User();
         user.setId("whiteship");
         user.setName("백기선");
         user.setPassword("married");
 
         dao.add(user);
+        Assert.assertThat(dao.getCount(), CoreMatchers.is(1));
 
         User user2 = dao.get(user.getId());
 
