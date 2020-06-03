@@ -16,21 +16,24 @@ public class UserDaoTest {
         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
         UserDao dao = context.getBean("userDao", UserDao.class);
 
+        User user1 = new User("gyumee", "박성철", "springno1");
+        User user2 = new User("leegw700", "이길원", "springno2");
+
         dao.deleteAll();
         Assert.assertThat(dao.getCount(), CoreMatchers.is(0));
 
-        User user = new User();
-        user.setId("whiteship");
-        user.setName("백기선");
-        user.setPassword("married");
+        dao.add(user1);
+        dao.add(user2);
+        Assert.assertThat(dao.getCount(), CoreMatchers.is(2));
 
-        dao.add(user);
-        Assert.assertThat(dao.getCount(), CoreMatchers.is(1));
+        User userget1 = dao.get(user1.getId());
+        Assert.assertThat(user1.getName(), CoreMatchers.is(userget1.getName()));
+        Assert.assertThat(user1.getPassword(), CoreMatchers.is(userget1.getPassword()));
 
-        User user2 = dao.get(user.getId());
+        User userget2 = dao.get(user2.getId());
+        Assert.assertThat(user2.getName(), CoreMatchers.is(userget2.getName()));
+        Assert.assertThat(user2.getPassword(), CoreMatchers.is(userget2.getPassword()));
 
-        Assert.assertThat(user2.getName(), CoreMatchers.is(user.getName()));
-        Assert.assertThat(user2.getPassword(), CoreMatchers.is(user.getPassword()));
     }
 
     @Test
