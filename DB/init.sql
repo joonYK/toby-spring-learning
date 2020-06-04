@@ -5,3 +5,12 @@ create table users (
   name varchar(20) not null,
   password varchar(10) not null
 )
+
+create schema testdb charset utf8;
+
+create table testdb.users (
+  id varchar(10) primary key,
+  name varchar(20) not null,
+  password varchar(10) not null
+)
+
