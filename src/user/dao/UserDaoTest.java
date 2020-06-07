@@ -11,11 +11,8 @@ import user.domain.User;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserDaoTest {
 
-    //@Autowired
     private UserDao dao;
 
     private User user1;
