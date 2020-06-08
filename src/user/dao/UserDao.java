@@ -11,7 +11,6 @@ import java.sql.SQLException;
 
 public class UserDao {
     
-
     private DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {
