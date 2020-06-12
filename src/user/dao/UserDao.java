@@ -1,8 +1,6 @@
 package user.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import user.dao.statement.DeleteAllStatement;
-import user.dao.statement.StatementStrategy;
 import user.domain.User;
 
 import javax.sql.DataSource;
@@ -20,8 +18,7 @@ public class UserDao {
     }
 
     public void add(final User user) throws SQLException {
-
-        class AddStatement implements StatementStrategy {
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
             @Override
             public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
                 PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
@@ -31,10 +28,7 @@ public class UserDao {
 
                 return ps;
             }
-        }
-
-        StatementStrategy strategy = new AddStatement();
-        jdbcContextWithStatementStrategy(strategy);
+        });
     }
 
     public User get(String id) throws SQLException, EmptyResultDataAccessException {
@@ -65,8 +59,12 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        StatementStrategy strategy = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(strategy);
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                return c.prepareStatement("delete from users");
+            }
+        });
     }
 
     public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
