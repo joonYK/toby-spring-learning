@@ -1,16 +1,30 @@
 package learningtest.template;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 
 public class CalcSumTest {
 
+    Calculator calculator;
+    String numFilepath;
+
+    @Before
+    public void setUp() {
+        this.calculator = new Calculator();
+        this.numFilepath = getClass().getResource("numbers.txt").getPath();
+    }
+
     @Test
     public void sumOfNumbers() throws IOException {
-        Calculator calculator = new Calculator();
-        int sum = calculator.calcSum(getClass().getResource("numbers.txt").getPath());
-        Assert.assertEquals(10, sum);
+        Assert.assertEquals(calculator.calcSum(numFilepath), 10);
     }
+
+    @Test
+    public void multiplyOfNumbers() throws IOException {
+        Assert.assertEquals(calculator.calcMultiply(numFilepath), 24);
+    }
+
 }
