@@ -4,15 +4,20 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import user.domain.User;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserDaoTest {
 
+    @Autowired
     private UserDao dao;
 
     private User user1;
@@ -21,11 +26,6 @@ public class UserDaoTest {
 
     @Before
     public void setUp() {
-        dao = new UserDao();
-        DataSource dataSource = new SingleConnectionDataSource(
-                "jdbc:mysql://localhost/testdb?serverTimezone=UTC", "root", "1234", true);
-        dao.setDataSource(dataSource);
-
         user1 = new User("gyumee", "박성철", "springno1");
         user2 = new User("leegw700", "이길원", "springno2");
         user3 = new User("bumgin", "박범진", "springno3");
@@ -72,5 +72,6 @@ public class UserDaoTest {
 
         dao.get("unknown_id");
     }
+
 
 }
