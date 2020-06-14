@@ -12,14 +12,15 @@ import java.sql.SQLException;
 public class UserDao {
 
     private DataSource dataSource;
+
     private JdbcContext jdbcContext;
 
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+        jdbcContext = new JdbcContext();
 
-    public void setJdbcContext(JdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
+        jdbcContext.setDataSource(dataSource);
+
+        this.dataSource = dataSource;
     }
 
     public void add(final User user) throws SQLException {
