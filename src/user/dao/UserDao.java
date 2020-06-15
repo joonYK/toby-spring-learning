@@ -13,7 +13,6 @@ public class UserDao {
 
     private DataSource dataSource;
 
-
     private JdbcContext jdbcContext;
 
     public void setDataSource(DataSource dataSource) {
