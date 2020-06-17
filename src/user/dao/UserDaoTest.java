@@ -11,7 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import user.domain.User;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -77,6 +76,9 @@ public class UserDaoTest {
     @Test
     public void getAll() {
         dao.deleteAll();
+
+        List<User> users0 = dao.getAll();
+        Assert.assertThat(users0.size(), CoreMatchers.is(0));
 
         dao.add(user1);
         List<User> users1 = dao.getAll();
