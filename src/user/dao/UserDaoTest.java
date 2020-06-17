@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import user.domain.User;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
@@ -32,7 +33,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void addAndGet() throws SQLException {
+    public void addAndGet() {
         dao.deleteAll();
         Assert.assertThat(dao.getCount(), CoreMatchers.is(0));
 
@@ -51,7 +52,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void count() throws SQLException {
+    public void count() {
         dao.deleteAll();
         Assert.assertThat(dao.getCount(), CoreMatchers.is(0));
 
@@ -66,11 +67,41 @@ public class UserDaoTest {
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
-    public void getUserFailure() throws SQLException {
+    public void getUserFailure() {
         dao.deleteAll();
         Assert.assertThat(dao.getCount(), CoreMatchers.is(0));
 
         dao.get("unknown_id");
+    }
+
+    @Test
+    public void getAll() {
+        dao.deleteAll();
+
+        dao.add(user1);
+        List<User> users1 = dao.getAll();
+        Assert.assertThat(users1.size(), CoreMatchers.is(1));
+        checkSameUser(user1, users1.get(0));
+
+        dao.add(user2);
+        List<User> users2 = dao.getAll();
+        Assert.assertThat(users2.size(), CoreMatchers.is(2));
+        checkSameUser(user1, users2.get(0));
+        checkSameUser(user2, users2.get(1));
+
+        dao.add(user3);
+        List<User> users3 = dao.getAll();
+        Assert.assertThat(users3.size(), CoreMatchers.is(3));
+        checkSameUser(user3, users3.get(0));
+        checkSameUser(user1, users3.get(1));
+        checkSameUser(user2, users3.get(2));
+
+    }
+
+    private void checkSameUser(User user1, User user2) {
+        Assert.assertThat(user1.getId(), CoreMatchers.is(user2.getId()));
+        Assert.assertThat(user1.getName(), CoreMatchers.is(user2.getName()));
+        Assert.assertThat(user1.getPassword(), CoreMatchers.is(user2.getPassword()));
     }
 
 
