@@ -19,6 +19,18 @@ public class UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    private RowMapper<User> userRowMapper = new RowMapper<User>() {
+        @Override
+        public User mapRow(ResultSet resultSet, int i) throws SQLException {
+            User user = new User();
+            user.setId(resultSet.getString("id"));
+            user.setName(resultSet.getString("name"));
+            user.setPassword(resultSet.getString("password"));
+
+            return user;
+        }
+    };
+
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -30,33 +42,12 @@ public class UserDao {
 
     public User get(String id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject("select * from users where id = ?",
-                new Object[]{id},
-                new RowMapper<User>() {
-                    @Override
-                    public User mapRow(ResultSet resultSet, int i) throws SQLException {
-                        User user = new User();
-                        user.setId(resultSet.getString("id"));
-                        user.setName(resultSet.getString("name"));
-                        user.setPassword(resultSet.getString("password"));
-
-                        return user;
-                    }
-                });
+                new Object[]{id}, userRowMapper);
     }
 
     public List<User> getAll() {
         return jdbcTemplate.query("select * from users order by id",
-                new RowMapper<User>() {
-                    @Override
-                    public User mapRow(ResultSet resultSet, int i) throws SQLException {
-                        User user = new User();
-                        user.setId(resultSet.getString("id"));
-                        user.setName(resultSet.getString("name"));
-                        user.setPassword(resultSet.getString("password"));
-
-                        return user;
-                    }
-                });
+                userRowMapper);
     }
 
     public void deleteAll() {
