@@ -1,11 +1,13 @@
 package user.dao;
 
+import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import user.dao.exception.DuplicateUserIdException;
 import user.domain.User;
 
 import javax.sql.DataSource;
@@ -23,8 +25,16 @@ public class UserDao {
     }
 
     public void add(final User user) throws SQLException {
-        jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
-                user.getId(), user.getName(), user.getPassword());
+
+        try {
+            jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
+                    user.getId(), user.getName(), user.getPassword());
+        } catch (DataAccessException e) {
+            if(((SQLException)e.getCause()).getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY)
+                throw new DuplicateUserIdException(e);
+            else
+                throw  new RuntimeException(e);
+        }
     }
 
     public User get(String id) throws SQLException, EmptyResultDataAccessException {
