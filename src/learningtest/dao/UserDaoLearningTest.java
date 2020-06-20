@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import user.dao.UserDao;
+import user.domain.Level;
 import user.domain.User;
 
 import javax.sql.DataSource;
@@ -32,7 +33,7 @@ public class UserDaoLearningTest {
 
     @Before
     public void setUp() {
-        user1 = new User("gyumee", "박성철", "springno1");
+        user1 = new User("gyumee", "박성철", "springno1", Level.BASIC, 1, 0);
     }
 
     @Test(expected = DuplicateKeyException.class)

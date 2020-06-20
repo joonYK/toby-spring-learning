@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import user.domain.Level;
 import user.domain.User;
 
 import java.util.List;
@@ -26,9 +27,9 @@ public class UserDaoTest {
 
     @Before
     public void setUp() {
-        user1 = new User("gyumee", "박성철", "springno1");
-        user2 = new User("leegw700", "이길원", "springno2");
-        user3 = new User("bumgin", "박범진", "springno3");
+        user1 = new User("gyumee", "박성철", "springno1", Level.BASIC, 1, 0);
+        user2 = new User("leegw700", "이길원", "springno2", Level.SILVER, 55, 10);
+        user3 = new User("bumgin", "박범진", "springno3", Level.GOLD, 100, 40);
     }
 
     @Test
@@ -41,13 +42,10 @@ public class UserDaoTest {
         Assert.assertThat(dao.getCount(), CoreMatchers.is(2));
 
         User userget1 = dao.get(user1.getId());
-        Assert.assertThat(user1.getName(), CoreMatchers.is(userget1.getName()));
-        Assert.assertThat(user1.getPassword(), CoreMatchers.is(userget1.getPassword()));
+        checkSameUser(user1, userget1);
 
         User userget2 = dao.get(user2.getId());
-        Assert.assertThat(user2.getName(), CoreMatchers.is(userget2.getName()));
-        Assert.assertThat(user2.getPassword(), CoreMatchers.is(userget2.getPassword()));
-
+        checkSameUser(user2, userget2);
     }
 
     @Test
@@ -104,6 +102,9 @@ public class UserDaoTest {
         Assert.assertThat(user1.getId(), CoreMatchers.is(user2.getId()));
         Assert.assertThat(user1.getName(), CoreMatchers.is(user2.getName()));
         Assert.assertThat(user1.getPassword(), CoreMatchers.is(user2.getPassword()));
+        Assert.assertThat(user1.getLevel(), CoreMatchers.is(user2.getLevel()));
+        Assert.assertThat(user1.getLogin(), CoreMatchers.is(user2.getLogin()));
+        Assert.assertThat(user1.getRecommend(), CoreMatchers.is(user2.getRecommend()));
     }
 
 

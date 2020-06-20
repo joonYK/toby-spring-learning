@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import user.domain.Level;
 import user.domain.User;
 
 import javax.sql.DataSource;
@@ -26,6 +27,9 @@ public class UserDaoJdbc implements UserDao {
             user.setId(resultSet.getString("id"));
             user.setName(resultSet.getString("name"));
             user.setPassword(resultSet.getString("password"));
+            user.setLevel(Level.valueOf(resultSet.getInt("level")));
+            user.setLogin(resultSet.getInt("login"));
+            user.setRecommend(resultSet.getInt("recommend"));
 
             return user;
         }
@@ -36,8 +40,8 @@ public class UserDaoJdbc implements UserDao {
     }
 
     public void add(final User user) {
-        jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
-                user.getId(), user.getName(), user.getPassword());
+        jdbcTemplate.update("insert into users(id, name, password, level, login ,recommend) values(?,?,?,?,?,?)",
+                user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());
 
     }
 
