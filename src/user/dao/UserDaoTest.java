@@ -98,6 +98,23 @@ public class UserDaoTest {
 
     }
 
+    @Test
+    public void update() {
+        dao.deleteAll();
+
+        dao.add(user1);
+
+        user1.setName("오민규");
+        user1.setPassword("springno6");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(999);
+        dao.update(user1);
+
+        User user1update = dao.get(user1.getId());
+        checkSameUser(user1, user1update);
+    }
+
     private void checkSameUser(User user1, User user2) {
         Assert.assertThat(user1.getId(), CoreMatchers.is(user2.getId()));
         Assert.assertThat(user1.getName(), CoreMatchers.is(user2.getName()));
@@ -106,7 +123,5 @@ public class UserDaoTest {
         Assert.assertThat(user1.getLogin(), CoreMatchers.is(user2.getLogin()));
         Assert.assertThat(user1.getRecommend(), CoreMatchers.is(user2.getRecommend()));
     }
-
-
 
 }
