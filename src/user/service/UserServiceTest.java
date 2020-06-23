@@ -44,6 +44,7 @@ public class UserServiceTest {
         for (User user : users)
             userDao.add(user);
 
+        
         userService.upgradeLevels();
 
         checkLevel(users.get(0), Level.BASIC);
@@ -57,5 +58,26 @@ public class UserServiceTest {
     private void checkLevel(User user, Level expectedLevel) {
         User userUpdate = userDao.get(user.getId());
         Assert.assertEquals(userUpdate.getLevel(), expectedLevel);
+    }
+
+    @Test
+    public void add() {
+        userDao.deleteAll();
+
+        //GOLD로 적용되있어서 Level 초기화 안함.
+        User userWithLevel = users.get(4);
+
+        //Level null로 BASIC로 초기화 되야함.
+        User userWithoutLevel = users.get(0);
+        userWithoutLevel.setLevel(null);
+
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
+
+        User userWithLevelRead = userDao.get(userWithLevel.getId());
+        User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
+
+        Assert.assertEquals(userWithLevelRead.getLevel(), userWithLevel.getLevel());
+        Assert.assertEquals(userWithoutLevelRead.getLevel(), Level.BASIC);
     }
 }
