@@ -20,6 +20,24 @@ import static user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
 
+    static class TestUserService extends UserService {
+        private String id;
+
+        private TestUserService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected void upgradeLevel(User user) {
+            //미리 지정한 id값과 일치하는 User면 예외 발생.
+            if(user.getId().equals(this.id)) throw new TestUserServiceException();
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
+    }
+
     @Autowired
     private UserService userService;
 
@@ -48,15 +66,15 @@ public class UserServiceTest {
 
         userService.upgradeLevels();
 
-        checkLevel(users.get(0), false);
-        checkLevel(users.get(1), true);
-        checkLevel(users.get(2), false);
-        checkLevel(users.get(3), true);
-        checkLevel(users.get(4), false);
+        checkLevelUpgraded(users.get(0), false);
+        checkLevelUpgraded(users.get(1), true);
+        checkLevelUpgraded(users.get(2), false);
+        checkLevelUpgraded(users.get(3), true);
+        checkLevelUpgraded(users.get(4), false);
 
     }
 
-    private void checkLevel(User user, boolean upgraded) {
+    private void checkLevelUpgraded(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
 
         //level 업그레이드가 된 것인지 아닌지
@@ -86,5 +104,26 @@ public class UserServiceTest {
 
         Assert.assertEquals(userWithLevelRead.getLevel(), userWithLevel.getLevel());
         Assert.assertEquals(userWithoutLevelRead.getLevel(), Level.BASIC);
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+
+        userDao.deleteAll();
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            testUserService.upgradeLevels();
+            Assert.fail("TestUserServiceException expected");
+        } catch (TestUserServiceException e) {
+        }
+
+        //예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었는지 확인.
+        checkLevelUpgraded(users.get(1), false);
+
     }
 }
