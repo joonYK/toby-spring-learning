@@ -11,6 +11,7 @@ import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import static user.service.UserService.MIN_LOGOUT_FOR_SILVER;
@@ -44,6 +45,9 @@ public class UserServiceTest {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private DataSource dataSource;
+
     private List<User> users;
 
     @Before
@@ -58,7 +62,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         userDao.deleteAll();
 
         for (User user : users)
@@ -110,17 +114,16 @@ public class UserServiceTest {
     public void upgradeAllOrNothing() {
         UserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
+        testUserService.setDataSource(this.dataSource);
 
         userDao.deleteAll();
-        for (User user : users) {
+        for (User user : users)
             userDao.add(user);
-        }
 
         try {
             testUserService.upgradeLevels();
             Assert.fail("TestUserServiceException expected");
-        } catch (TestUserServiceException e) {
-        }
+        } catch (Exception ignored) {}
 
         //예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었는지 확인.
         checkLevelUpgraded(users.get(1), false);
