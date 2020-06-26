@@ -1,14 +1,14 @@
 package user.service;
 
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
@@ -28,11 +28,12 @@ public class UserService {
         this.dataSource = dataSource;
     }
 
-    public void upgradeLevels() throws Exception {
-        TransactionSynchronizationManager.initSynchronization();
-        Connection c = DataSourceUtils.getConnection(dataSource);
+    public void upgradeLevels() {
+        //트랜잭션 매니저 추상 인터페이스 (구현체는 JDBC 트랜잭션 오브젝트)
+        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
 
-        c.setAutoCommit(false);
+        //트랜잭션 시작
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         try {
             List<User> users = userDao.getAll();
@@ -42,14 +43,10 @@ public class UserService {
                     upgradeLevel(user);
             }
 
-            c.commit();
+            transactionManager.commit(status);
         } catch (Exception e) {
-            c.rollback();
+            transactionManager.rollback(status);
             throw e;
-        } finally {
-            DataSourceUtils.releaseConnection(c, dataSource);
-            TransactionSynchronizationManager.unbindResource(this.dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
 
     }
