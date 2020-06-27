@@ -27,9 +27,9 @@ public class UserDaoTest {
 
     @Before
     public void setUp() {
-        user1 = new User("gyumee", "박성철", "springno1", Level.BASIC, 1, 0);
-        user2 = new User("leegw700", "이길원", "springno2", Level.SILVER, 55, 10);
-        user3 = new User("bumgin", "박범진", "springno3", Level.GOLD, 100, 40);
+        user1 = new User("gyumee", "박성철", "springno1", Level.BASIC, 1, 0, "gyumee@email.com");
+        user2 = new User("leegw700", "이길원", "springno2", Level.SILVER, 55, 10, "leegw700@email.com");
+        user3 = new User("bumgin", "박범진", "springno3", Level.GOLD, 100, 40, "bumgin@email.com");
     }
 
     @Test
@@ -127,6 +127,7 @@ public class UserDaoTest {
         Assert.assertThat(user1.getLevel(), CoreMatchers.is(user2.getLevel()));
         Assert.assertThat(user1.getLogin(), CoreMatchers.is(user2.getLogin()));
         Assert.assertThat(user1.getRecommend(), CoreMatchers.is(user2.getRecommend()));
+        Assert.assertThat(user1.getEmail(), CoreMatchers.is(user2.getEmail()));
     }
 
 }

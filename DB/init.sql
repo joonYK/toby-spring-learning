@@ -6,7 +6,8 @@ create table users (
   password varchar(10) not null,
   level tinyint not null,
   login int not null,
-  recommend int not null
+  recommend int not null,
+  email varchar(50) not null
 )
 
 create schema testdb charset utf8;
@@ -17,6 +18,7 @@ create table testdb.users (
   password varchar(10) not null,
   level tinyint not null,
   login int not null,
-  recommend int not null
+  recommend int not null,
+  email varchar(50) not null
 )
 

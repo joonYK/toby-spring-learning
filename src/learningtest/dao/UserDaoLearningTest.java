@@ -33,7 +33,7 @@ public class UserDaoLearningTest {
 
     @Before
     public void setUp() {
-        user1 = new User("gyumee", "박성철", "springno1", Level.BASIC, 1, 0);
+        user1 = new User("gyumee", "박성철", "springno1", Level.BASIC, 1, 0, "gyumee@email.com");
     }
 
     @Test(expected = DuplicateKeyException.class)
