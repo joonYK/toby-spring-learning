@@ -5,7 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -13,8 +16,10 @@ import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static user.service.UserService.MIN_LOGOUT_FOR_SILVER;
 import static user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
@@ -35,6 +40,25 @@ public class UserServiceTest {
             //미리 지정한 id값과 일치하는 User면 예외 발생.
             if(user.getId().equals(this.id)) throw new TestUserServiceException();
             super.upgradeLevel(user);
+        };
+    }
+
+    static class MockMailSender implements MailSender {
+        //UserService로부터 전송 요청을 받은 메일 주소를 저장해두는 곳.
+        private List<String> requests = new ArrayList<>();
+
+        public List<String> getRequests() {
+            return requests;
+        }
+
+        @Override
+        public void send(SimpleMailMessage simpleMailMessage) throws MailException {
+            requests.add(Objects.requireNonNull(simpleMailMessage.getTo())[0]);
+        }
+
+        @Override
+        public void send(SimpleMailMessage... simpleMailMessages) throws MailException {
+
         }
     }
 
@@ -67,11 +91,15 @@ public class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeLevels() {
         userDao.deleteAll();
 
         for (User user : users)
             userDao.add(user);
+
+        MockMailSender mockMailSender = new MockMailSender();
+        userService.setMailSender(mockMailSender);
 
         userService.upgradeLevels();
 
@@ -81,6 +109,10 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
 
+        List<String> requests = mockMailSender.getRequests();
+        Assert.assertEquals(requests.size(), 2);
+        Assert.assertEquals(requests.get(0), users.get(1).getEmail());
+        Assert.assertEquals(requests.get(1), users.get(3).getEmail());
     }
 
     private void checkLevelUpgraded(User user, boolean upgraded) {
