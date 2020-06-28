@@ -104,9 +104,6 @@ public class UserServiceTest {
     private UserService userService;
 
     @Autowired
-    private UserServiceImpl userServiceImpl;
-
-    @Autowired
     private UserDao userDao;
 
     @Autowired
@@ -131,21 +128,20 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void upgradeLevels() {
-        userDao.deleteAll();
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
 
-        for (User user : users)
-            userDao.add(user);
+        MockUserDao mockUserDao = new MockUserDao(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
 
         MockMailSender mockMailSender = new MockMailSender();
         userServiceImpl.setMailSender(mockMailSender);
 
         userServiceImpl.upgradeLevels();
 
-        checkLevelUpgraded(users.get(0), false);
-        checkLevelUpgraded(users.get(1), true);
-        checkLevelUpgraded(users.get(2), false);
-        checkLevelUpgraded(users.get(3), true);
-        checkLevelUpgraded(users.get(4), false);
+        List<User> updated = mockUserDao.getUpdated();
+        Assert.assertEquals(updated.size(), 2);
+        checkUserAndLevel(updated.get(0), "joytouch", Level.SILVER);
+        checkUserAndLevel(updated.get(1), "madnite1", Level.GOLD);
 
         List<String> requests = mockMailSender.getRequests();
         Assert.assertEquals(requests.size(), 2);
@@ -153,16 +149,11 @@ public class UserServiceTest {
         Assert.assertEquals(requests.get(1), users.get(3).getEmail());
     }
 
-    private void checkLevelUpgraded(User user, boolean upgraded) {
-        User userUpdate = userDao.get(user.getId());
-
-        //level 업그레이드가 된 것인지 아닌지
-        if(upgraded)
-            Assert.assertEquals(userUpdate.getLevel(), user.getLevel().nextLevel());
-        else
-            Assert.assertEquals(userUpdate.getLevel(), user.getLevel());
-
+    private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        Assert.assertEquals(updated.getId(), expectedId);
+        Assert.assertEquals(updated.getLevel(), expectedLevel);
     }
+
 
     @Test
     public void add() {
@@ -206,6 +197,16 @@ public class UserServiceTest {
 
         //예외가 발생하기 전에 레벨 변경이 있었던 사용자의 레벨이 처음 상태로 바뀌었는지 확인.
         checkLevelUpgraded(users.get(1), false);
+    }
+
+    private void checkLevelUpgraded(User user, boolean upgraded) {
+        User userUpdate = userDao.get(user.getId());
+
+        //level 업그레이드가 된 것인지 아닌지
+        if(upgraded)
+            Assert.assertEquals(userUpdate.getLevel(), user.getLevel().nextLevel());
+        else
+            Assert.assertEquals(userUpdate.getLevel(), user.getLevel());
 
     }
 }
