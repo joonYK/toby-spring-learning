@@ -4,11 +4,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static org.mockito.Mockito.*;
 import static user.service.UserServiceImpl.MIN_LOGOUT_FOR_SILVER;
 import static user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
@@ -43,61 +45,7 @@ public class UserServiceTest {
         };
     }
 
-    static class MockMailSender implements MailSender {
-        //UserService로부터 전송 요청을 받은 메일 주소를 저장해두는 곳.
-        private List<String> requests = new ArrayList<>();
-
-        public List<String> getRequests() {
-            return requests;
-        }
-
-        @Override
-        public void send(SimpleMailMessage simpleMailMessage) throws MailException {
-            requests.add(Objects.requireNonNull(simpleMailMessage.getTo())[0]);
-        }
-
-        @Override
-        public void send(SimpleMailMessage... simpleMailMessages) throws MailException {
-
-        }
-    }
-
     static class TestUserServiceException extends RuntimeException {
-    }
-
-    static class MockUserDao implements UserDao {
-        private List<User> users;
-        private List<User> updated = new ArrayList<>();
-
-        public MockUserDao(List<User> users) {
-            this.users = users;
-        }
-
-        public List<User> getUpdated() {
-            return updated;
-        }
-
-        @Override
-        public List<User> getAll() {
-            return users;
-        }
-
-        @Override
-        public void update(User user) {
-            updated.add(user);
-        }
-
-        @Override
-        public void add(User user) { throw new UnsupportedOperationException(); }
-
-        @Override
-        public User get(String id) { throw new UnsupportedOperationException(); }
-
-        @Override
-        public void deleteAll() {throw new UnsupportedOperationException();}
-
-        @Override
-        public int getCount() {throw new UnsupportedOperationException();}
     }
 
     @Autowired
@@ -126,32 +74,29 @@ public class UserServiceTest {
     }
 
     @Test
-    @DirtiesContext
     public void upgradeLevels() {
         UserServiceImpl userServiceImpl = new UserServiceImpl();
 
-        MockUserDao mockUserDao = new MockUserDao(this.users);
+        UserDao mockUserDao = mock(UserDao.class);
+        when(mockUserDao.getAll()).thenReturn(this.users);
         userServiceImpl.setUserDao(mockUserDao);
 
-        MockMailSender mockMailSender = new MockMailSender();
+        MailSender mockMailSender = mock(MailSender.class);
         userServiceImpl.setMailSender(mockMailSender);
 
         userServiceImpl.upgradeLevels();
 
-        List<User> updated = mockUserDao.getUpdated();
-        Assert.assertEquals(updated.size(), 2);
-        checkUserAndLevel(updated.get(0), "joytouch", Level.SILVER);
-        checkUserAndLevel(updated.get(1), "madnite1", Level.GOLD);
+        verify(mockUserDao, times(2)).update(any(User.class));
+        verify(mockUserDao).update(users.get(1));
+        Assert.assertEquals(users.get(1).getLevel(), Level.SILVER);
+        verify(mockUserDao).update(users.get(3));
+        Assert.assertEquals(users.get(3).getLevel(), Level.GOLD);
 
-        List<String> requests = mockMailSender.getRequests();
-        Assert.assertEquals(requests.size(), 2);
-        Assert.assertEquals(requests.get(0), users.get(1).getEmail());
-        Assert.assertEquals(requests.get(1), users.get(3).getEmail());
-    }
-
-    private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
-        Assert.assertEquals(updated.getId(), expectedId);
-        Assert.assertEquals(updated.getLevel(), expectedLevel);
+        ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mockMailSender, times(2)).send(mailMessageArg.capture());
+        List<SimpleMailMessage> mailMessages = mailMessageArg.getAllValues();
+        Assert.assertEquals(Objects.requireNonNull(mailMessages.get(0).getTo())[0], users.get(1).getEmail());
+        Assert.assertEquals(Objects.requireNonNull(mailMessages.get(1).getTo())[0], users.get(3).getEmail());
     }
 
 
