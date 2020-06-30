@@ -22,4 +22,12 @@ public class ReflectionTest {
         Assert.assertEquals((char)charAtMethod.invoke(name, 0), 'S');
 
     }
+
+    @Test
+    public void simpleProxy() {
+        Hello hello = new HelloUppercase(new HelloTarget());
+        Assert.assertEquals(hello.sayHello("JY"), "HELLO JY");
+        Assert.assertEquals(hello.sayHi("JY"), "HI JY");
+        Assert.assertEquals(hello.sayThankYou("JY"), "THANK YOU JY");
+    }
 }
