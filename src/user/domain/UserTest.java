@@ -1,4 +1,4 @@
-package user.service;
+package user.domain;
 
 import org.junit.Assert;
 import org.junit.Before;

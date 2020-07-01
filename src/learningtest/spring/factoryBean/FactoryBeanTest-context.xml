@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 팩토리 빈을 구현한 클래스를 등록하면 팩토리 빈을 통해 만들어지는 오브젝트를 스프링의 빈으로 등록시켜준다.-->
+    <bean id="message" class="learningtest.spring.factoryBean.MessageFactoryBean">
+        <property name="text" value="Factory Bean"></property>
+    </bean>
+</beans>
