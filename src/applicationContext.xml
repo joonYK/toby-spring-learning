@@ -14,9 +14,11 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
-    <bean id="userService" class="user.service.UserServiceTx">
-        <property name="userService" ref="userServiceImpl"></property>
+    <bean id="userService" class="user.service.TxProxyFactoryBean">
+        <property name="target" ref="userServiceImpl"></property>
         <property name="transactionManager" ref="transactionManager"></property>
+        <property name="pattern" value="upgradeLevels"></property>
+        <property name="serviceInterface" value="user.service.UserService"></property>
     </bean>
 
     <bean id="userServiceImpl" class="user.service.UserServiceImpl">

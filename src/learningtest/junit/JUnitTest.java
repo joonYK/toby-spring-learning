@@ -14,7 +14,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/junit.xml")
+@ContextConfiguration(locations = "/learningtest/junit/junit.xml")
 public class JUnitTest {
     @Autowired
     ApplicationContext context;
