@@ -1,4 +1,4 @@
-package learningtest.jdk;
+package learningtest.jdk.proxy;
 
 public class HelloTarget implements Hello {
     @Override
