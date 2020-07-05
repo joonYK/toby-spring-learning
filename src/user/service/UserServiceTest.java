@@ -5,20 +5,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
 import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
 
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -35,12 +31,12 @@ public class UserServiceTest {
     @Autowired
     private ApplicationContext context;
 
-    static class TestUserService extends UserServiceImpl {
-        private String id;
-
-        private TestUserService(String id) {
-            this.id = id;
-        }
+    /**
+     * 포인트컷의 클래스 필터에 선정되도록 이름을 ~ServiceImpl로 변경.
+     */
+    static class TestUserServiceImpl extends UserServiceImpl {
+        //테스트 픽스처의 uers(3)의 id값을 고정시킴.
+        private String id = "madnite1";
 
         @Override
         protected void upgradeLevel(User user) {
@@ -56,11 +52,15 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    /**
+     * 같은 타입의 빈이 두 개 존재하기 때문에 필드 이름을 기준으로 주입될 빈이 결정.
+     * 자동 프록시 생성기에 의해 트랜잭션 부가기능이 testUserService 빈에 적용됐는지를 확인하는 것이 목적이다.
+     */
     @Autowired
-    private UserDao userDao;
+    private UserService testUserService;
 
     @Autowired
-    private PlatformTransactionManager transactionManager;
+    private UserDao userDao;
 
     @Autowired
     private MailSender mailSender;
@@ -127,23 +127,13 @@ public class UserServiceTest {
     }
 
     @Test
-    @DirtiesContext
-    public void upgradeAllOrNothing() throws Exception {
-        UserServiceImpl testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-        testUserService.setMailSender(this.mailSender);
-
-        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-
+    public void upgradeAllOrNothing() {
         userDao.deleteAll();
         for (User user : users)
             userDao.add(user);
 
         try {
-            txUserService.upgradeLevels();
+            testUserService.upgradeLevels();
             Assert.fail("TestUserServiceException expected");
         } catch (Exception ignored) {}
 
