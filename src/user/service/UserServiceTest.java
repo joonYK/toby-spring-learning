@@ -1,5 +1,6 @@
 package user.service;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,5 +151,10 @@ public class UserServiceTest {
         else
             Assert.assertEquals(userUpdate.getLevel(), user.getLevel());
 
+    }
+
+    @Test
+    public void advisorAutoProxyCreator() {
+        Assert.assertThat(testUserService, CoreMatchers.instanceOf(java.lang.reflect.Proxy.class));
     }
 }
