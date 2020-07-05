@@ -1,4 +1,4 @@
-package learningtest.jdk.proxy;
+package learningtest.proxy;
 
 public interface Hello {
     String sayHello(String name);
