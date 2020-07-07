@@ -63,9 +63,6 @@ public class UserServiceTest {
     @Autowired
     private UserDao userDao;
 
-    @Autowired
-    private MailSender mailSender;
-
     private List<User> users;
 
     @Before
