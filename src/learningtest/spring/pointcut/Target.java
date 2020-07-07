@@ -2,7 +2,7 @@ package learningtest.spring.pointcut;
 
 public class Target implements TargetInterface{
     @Override
-    public void Hello() {
+    public void hello() {
 
     }
 
