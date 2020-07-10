@@ -30,7 +30,7 @@
         <property name="host" value="mail.server.com"></property>
     </bean>
 
-    <bean id="testUserService" class="user.service.UserServiceTest$TestUserServiceImpl" parent="userService"></bean>
+    <bean id="testUserService" class="user.service.UserServiceTest$TestUserService" parent="userService"></bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>

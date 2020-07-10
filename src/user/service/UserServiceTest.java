@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,7 +36,7 @@ public class UserServiceTest {
     /**
      * 포인트컷의 클래스 필터에 선정되도록 이름을 ~ServiceImpl로 변경.
      */
-    static class TestUserServiceImpl extends UserServiceImpl {
+    static class TestUserService extends UserServiceImpl {
         //테스트 픽스처의 uers(3)의 id값을 고정시킴.
         private String id = "madnite1";
 
@@ -44,7 +45,16 @@ public class UserServiceTest {
             //미리 지정한 id값과 일치하는 User면 예외 발생.
             if(user.getId().equals(this.id)) throw new TestUserServiceException();
             super.upgradeLevel(user);
-        };
+        }
+
+        @Override
+        public List<User> getAll() {
+            for(User user : super.getAll()) {
+                //읽기 전용 메서드에 강제로 쓰기를 시도해서 예외가 발생하는 확인.
+                super.update(user);
+            }
+            return null;
+        }
     }
 
     static class TestUserServiceException extends RuntimeException {
@@ -153,5 +163,10 @@ public class UserServiceTest {
     @Test
     public void advisorAutoProxyCreator() {
         Assert.assertThat(testUserService, CoreMatchers.instanceOf(java.lang.reflect.Proxy.class));
+    }
+
+    @Test(expected = TransientDataAccessResourceException.class)
+    public void readOnlyTransactionAttribute() {
+        testUserService.getAll();
     }
 }
