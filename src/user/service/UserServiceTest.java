@@ -172,16 +172,20 @@ public class UserServiceTest {
         testUserService.getAll();
     }
 
+    /**
+     * 테스트 메서드를 하나의 트랜잭션 그룹으로 묶음으로써,
+     * DB 작업이 포함되는 테스트를 원하는 대로 제어하면서 효과적인 테스틀 작성 가능.
+     */
     @Test
     public void transactionSync() {
         DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        transactionDefinition.setReadOnly(true);
 
         /*
             트랜잭션 매니저에게 트랜잭션을 요청한다. 기존에 시작된 트랜잭션이 없으니 새로운 트랜잭션을 시작시키고
             트랜잭션 정보를 돌려준다. 동시에 만들어진 트랜잭션을 다른 곳에서도 사용할 수 있도록 동기화한다.
          */
         TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
-
 
         userService.deleteAll();
 
