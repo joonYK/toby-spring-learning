@@ -13,6 +13,9 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
@@ -29,9 +32,8 @@ import static user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
 
-    //upgradeAllOrNothing 메서드에서 팩토리 빈을 가져오려면 필요.
     @Autowired
-    private ApplicationContext context;
+    private PlatformTransactionManager transactionManager;
 
     /**
      * 포인트컷의 클래스 필터에 선정되도록 이름을 ~ServiceImpl로 변경.
@@ -168,5 +170,24 @@ public class UserServiceTest {
     @Test(expected = TransientDataAccessResourceException.class)
     public void readOnlyTransactionAttribute() {
         testUserService.getAll();
+    }
+
+    @Test
+    public void transactionSync() {
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+
+        /*
+            트랜잭션 매니저에게 트랜잭션을 요청한다. 기존에 시작된 트랜잭션이 없으니 새로운 트랜잭션을 시작시키고
+            트랜잭션 정보를 돌려준다. 동시에 만들어진 트랜잭션을 다른 곳에서도 사용할 수 있도록 동기화한다.
+         */
+        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+
+
+        userService.deleteAll();
+
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+
+        transactionManager.commit(transactionStatus);
     }
 }
