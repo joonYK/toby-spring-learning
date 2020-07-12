@@ -1,27 +1,23 @@
 package user.dao;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import user.domain.Level;
 import user.domain.User;
+import user.sqlService.SqlService;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 public class UserDaoJdbc implements UserDao {
 
-    private String sqlAdd;
+    private SqlService sqlService;
 
-    public void setSqlAdd(String sqlAdd) {
-        this.sqlAdd = sqlAdd;
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
     }
 
     private JdbcTemplate jdbcTemplate;
@@ -47,46 +43,38 @@ public class UserDaoJdbc implements UserDao {
     }
 
     public void add(final User user) {
-        jdbcTemplate.update(sqlAdd,
+        jdbcTemplate.update(sqlService.getSql("userAdd"),
                 user.getId(), user.getName(), user.getPassword(), user.getEmail(),
                 user.getLevel().intValue(), user.getLogin(), user.getRecommend());
 
     }
 
     public User get(String id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject("select * from users where id = ?",
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGet"),
                 new Object[]{id}, userRowMapper);
     }
 
     public List<User> getAll() {
-        return jdbcTemplate.query("select * from users order by id",
+        return jdbcTemplate.query(sqlService.getSql("userGetAll"),
                 userRowMapper);
     }
 
     public void deleteAll() {
-        jdbcTemplate.update("delete from users");
+        jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
     }
 
     public int getCount() {
-        return jdbcTemplate.query(new PreparedStatementCreator() {
-            @Override
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                return connection.prepareStatement("select count(*) from users");
-            }
-        }, new ResultSetExtractor<Integer>() {
-            @Override
-            public Integer extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-                resultSet.next();
-                return resultSet.getInt(1);
-            }
-        });
-
+        return jdbcTemplate.query(
+                connection -> connection.prepareStatement(sqlService.getSql("userGetCount")),
+                resultSet -> {
+                    resultSet.next();
+                    return resultSet.getInt(1);
+                });
     }
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update(
-                "update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?",
+        jdbcTemplate.update(sqlService.getSql("userUpdate"),
                 user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail(), user.getId()
         );
     }
