@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import user.dao.UserDao;
 import user.domain.Level;
@@ -176,7 +177,7 @@ public class UserServiceTest {
      * 테스트 메서드를 하나의 트랜잭션 그룹으로 묶음으로써,
      * DB 작업이 포함되는 테스트를 원하는 대로 제어하면서 효과적인 테스틀 작성 가능.
      */
-    @Test
+    @Test(expected = TransientDataAccessResourceException.class)
     public void transactionSync() {
         DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
         transactionDefinition.setReadOnly(true);
@@ -187,11 +188,23 @@ public class UserServiceTest {
          */
         TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
 
-        userService.deleteAll();
+        userDao.deleteAll();
 
         userService.add(users.get(0));
         userService.add(users.get(1));
 
         transactionManager.commit(transactionStatus);
+    }
+
+    /**
+     * 테스트에도 @Transactional 적용할 수 있다.
+     * 테스트 클래스에 적용하면 모든 테스트 메서드에 공통적으로 적용 가능.
+     */
+    @Test(expected = TransientDataAccessResourceException.class)
+    @Transactional(readOnly = true)
+    public void transactionAnnotationSync() {
+        userService.deleteAll();
+        userService.add(users.get(0));
+        userService.add(users.get(1));
     }
 }
