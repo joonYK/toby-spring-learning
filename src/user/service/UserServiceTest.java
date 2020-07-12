@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -203,6 +204,19 @@ public class UserServiceTest {
     @Test(expected = TransientDataAccessResourceException.class)
     @Transactional(readOnly = true)
     public void transactionAnnotationSync() {
+        userService.deleteAll();
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+    }
+
+    /**
+     * 테스트에서 @Transactional 사용 시, 기본적으로 테스트 수행 후에 Rollback 된다.
+     * commit하려면 @Rollback(value = false) 속성을 주면 된다.
+     */
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    public void transactionSyncRollbackFalse() {
         userService.deleteAll();
         userService.add(users.get(0));
         userService.add(users.get(1));
