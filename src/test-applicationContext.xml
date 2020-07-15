@@ -2,13 +2,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                             http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/aop
                             http://www.springframework.org/schema/aop/spring-aop.xsd
                             http://www.springframework.org/schema/tx
-                            http://www.springframework.org/schema/tx/spring-tx.xsd">
+                            http://www.springframework.org/schema/tx/spring-tx.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="com.mysql.cj.jdbc.Driver"></property>
@@ -22,20 +25,9 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
-    <bean id="sqlService" class="user.sqlService.XmlSqlService"></bean>
-
-    <!--<bean id="sqlService" class="user.sqlService.SimpleSqlService">
-        <property name="sqlMap">
-            <map>
-                <entry key="userAdd" value="insert into users(id, name, password, email, level, login, recommend) values(?,?,?,?,?,?,?)"/>
-                <entry key="userGet" value="select * from users where id = ?"/>
-                <entry key="userGetAll" value="select * from users order by id"/>
-                <entry key="userDeleteAll" value="delete from users"/>
-                <entry key="userGetCount" value="select count(*) from users"/>
-                <entry key="userUpdate" value="update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?"/>
-            </map>
-        </property>
-    </bean>-->
+    <bean id="sqlService" class="user.sqlService.XmlSqlService">
+        <property name="sqlmapFile" value="sqlmap.xml"></property>
+    </bean>
 
     <bean id="userService" class="user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"></property>
@@ -63,7 +55,11 @@
         <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
     </aop:config>-->
 
+    <!-- @Transactional 이 붙은 타입과 메서드에 트랜잭션 부가기능을 담은 프록시를 추가하도록 만들어주는 후처리기 등록-->
     <tx:annotation-driven />
+
+    <!-- 코드의 애노테이션을 이용해서 부가적인 빈 설정 또는 초기화 작업을 해주는 후처리기를 등록 -->
+    <context:annotation-config/>
 
 </beans>
 

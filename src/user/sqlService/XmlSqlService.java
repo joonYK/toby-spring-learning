@@ -4,6 +4,7 @@ import user.dao.UserDao;
 import user.sqlService.jaxb.SqlType;
 import user.sqlService.jaxb.Sqlmap;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -13,17 +14,25 @@ import java.util.Map;
 
 public class XmlSqlService implements SqlService {
 
+    private String sqlmapFile;
+
+    public void setSqlmapFile(String sqlmapFile) {
+        this.sqlmapFile = sqlmapFile;
+    }
+
     //읽어온 SQL을 저장해둘 MAP
     private Map<String, String> sqlMap = new HashMap<String, String>();
 
-    //스프링이 오브젝트를 만드는 시점에서 SQL을 읽어오도록 생성자를 이용한다.
-    public XmlSqlService() {
+    @PostConstruct //빈의 초기화 메서드.
+    public void loadSql() {
         String contextPath = Sqlmap.class.getPackage().getName();
 
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = UserDao.class.getResourceAsStream("sqlmap.xml");
+
+            //프로퍼티 설정을 통해 제공받은 파일 이름을 사용.
+            InputStream is = UserDao.class.getResourceAsStream(sqlmapFile);
             Sqlmap sqlmap = (Sqlmap)unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql())
