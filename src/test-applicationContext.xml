@@ -26,6 +26,8 @@
     </bean>
 
     <bean id="sqlService" class="user.sqlService.XmlSqlService">
+        <property name="sqlReader" ref="sqlService"></property>
+        <property name="sqlRegistry" ref="sqlService"></property>
         <property name="sqlmapFile" value="sqlmap.xml"></property>
     </bean>
 
