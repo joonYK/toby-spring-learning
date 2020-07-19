@@ -25,7 +25,7 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
-    <bean id="sqlService" class="user.sqlService.DefaultSqlService"></bean>
+    <!--<bean id="sqlService" class="user.sqlService.DefaultSqlService"></bean>-->
 
     <!--<bean id="sqlService" class="user.sqlService.BaseSqlService">
         <property name="sqlReader" ref="sqlReader"></property>
@@ -69,6 +69,14 @@
 
     <!-- 코드의 애노테이션을 이용해서 부가적인 빈 설정 또는 초기화 작업을 해주는 후처리기를 등록 -->
     <context:annotation-config/>
+
+    <bean id="sqlService" class="user.sqlService.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller"></property>
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="user.sqlService.jaxb"></property>
+    </bean>
 
 </beans>
 
