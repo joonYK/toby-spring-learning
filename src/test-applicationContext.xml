@@ -73,10 +73,17 @@
     <bean id="sqlService" class="user.sqlService.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"></property>
         <property name="sqlmap" value="classpath:user/dao/sqlmap.xml"></property>
+        <property name="sqlRegistry" ref="sqlRegistry"></property>
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="user.sqlService.jaxb"></property>
+    </bean>
+
+    <bean id="sqlRegistry" class="user.sqlService.MyUpdatableSqlRegistry"></bean>
+
+    <bean id="sqlAdminService" class="user.sqlService.SqlAdminService">
+        <property name="updatableSqlRegistry" ref="sqlRegistry"></property>
     </bean>
 
 </beans>
