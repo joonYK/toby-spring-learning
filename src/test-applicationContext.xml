@@ -80,7 +80,7 @@
         <property name="contextPath" value="user.sqlService.jaxb"></property>
     </bean>
 
-    <bean id="sqlRegistry" class="user.sqlService.MyUpdatableSqlRegistry"></bean>
+    <bean id="sqlRegistry" class="user.sqlService.sqlRegistry.ConcurrentHashMapRegistry"></bean>
 
     <bean id="sqlAdminService" class="user.sqlService.SqlAdminService">
         <property name="updatableSqlRegistry" ref="sqlRegistry"></property>

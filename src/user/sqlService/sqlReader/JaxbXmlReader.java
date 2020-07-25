@@ -1,8 +1,10 @@
-package user.sqlService;
+package user.sqlService.sqlReader;
 
 import user.dao.UserDao;
 import user.sqlService.jaxb.SqlType;
 import user.sqlService.jaxb.Sqlmap;
+import user.sqlService.sqlReader.SqlReader;
+import user.sqlService.sqlRegistry.SqlRegistry;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -10,6 +12,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 
 public class JaxbXmlReader implements SqlReader {
+
     private static final String DEFAULT_SQLMAP_FILE = "sqlmap.xml";
 
     private String sqlmapFile = DEFAULT_SQLMAP_FILE;

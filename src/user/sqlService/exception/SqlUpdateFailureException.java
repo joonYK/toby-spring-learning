@@ -1,4 +1,4 @@
-package issuetracker.sqlService;
+package user.sqlService.exception;
 
 public class SqlUpdateFailureException extends RuntimeException {
     public SqlUpdateFailureException(String message) {

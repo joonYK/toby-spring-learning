@@ -1,6 +1,6 @@
 package user.sqlService;
 
-import issuetracker.sqlService.UpdatableSqlRegistry;
+import user.sqlService.sqlRegistry.UpdatableSqlRegistry;
 
 public class SqlAdminService {
     private UpdatableSqlRegistry updatableSqlRegistry;

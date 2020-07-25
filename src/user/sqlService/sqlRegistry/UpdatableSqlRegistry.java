@@ -1,6 +1,7 @@
-package issuetracker.sqlService;
+package user.sqlService.sqlRegistry;
 
-import user.sqlService.SqlRegistry;
+import user.sqlService.exception.SqlUpdateFailureException;
+import user.sqlService.sqlRegistry.SqlRegistry;
 
 import java.util.Map;
 

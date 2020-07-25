@@ -7,6 +7,9 @@ import user.dao.UserDao;
 import user.sqlService.exception.SqlRetrievalFailureException;
 import user.sqlService.jaxb.SqlType;
 import user.sqlService.jaxb.Sqlmap;
+import user.sqlService.sqlReader.SqlReader;
+import user.sqlService.sqlRegistry.HashMapSqlRegistry;
+import user.sqlService.sqlRegistry.SqlRegistry;
 
 import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;

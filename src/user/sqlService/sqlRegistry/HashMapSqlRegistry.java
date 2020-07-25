@@ -1,4 +1,4 @@
-package user.sqlService;
+package user.sqlService.sqlRegistry;
 
 import user.sqlService.exception.SqlNotFoundException;
 

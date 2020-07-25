@@ -2,6 +2,8 @@ package user.sqlService;
 
 import user.sqlService.exception.SqlNotFoundException;
 import user.sqlService.exception.SqlRetrievalFailureException;
+import user.sqlService.sqlReader.SqlReader;
+import user.sqlService.sqlRegistry.SqlRegistry;
 
 import javax.annotation.PostConstruct;
 
