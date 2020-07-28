@@ -4,12 +4,15 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                             http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/aop
                             http://www.springframework.org/schema/aop/spring-aop.xsd
                             http://www.springframework.org/schema/tx
                             http://www.springframework.org/schema/tx/spring-tx.xsd
+                            http://www.springframework.org/schema/jdbc
+                            http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
                             http://www.springframework.org/schema/context
                             http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -24,19 +27,6 @@
         <property name="sqlService" ref="sqlService"></property>
         <property name="dataSource" ref="dataSource"></property>
     </bean>
-
-    <!--<bean id="sqlService" class="user.sqlService.DefaultSqlService"></bean>-->
-
-    <!--<bean id="sqlService" class="user.sqlService.BaseSqlService">
-        <property name="sqlReader" ref="sqlReader"></property>
-        <property name="sqlRegistry" ref="sqlRegistry"></property>
-    </bean>
-
-    <bean id="sqlReader" class="user.sqlService.JaxbXmlReader">
-        <property name="sqlmapFile" value="sqlmap.xml"></property>
-    </bean>
-
-    <bean id="sqlRegistry" class="user.sqlService.HashMapSqlRegistry"></bean>-->
 
     <bean id="userService" class="user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"></property>
@@ -70,6 +60,19 @@
     <!-- 코드의 애노테이션을 이용해서 부가적인 빈 설정 또는 초기화 작업을 해주는 후처리기를 등록 -->
     <context:annotation-config/>
 
+    <!--<bean id="sqlService" class="user.sqlService.DefaultSqlService"></bean>-->
+
+    <!--<bean id="sqlService" class="user.sqlService.BaseSqlService">
+        <property name="sqlReader" ref="sqlReader"></property>
+        <property name="sqlRegistry" ref="sqlRegistry"></property>
+    </bean>
+
+    <bean id="sqlReader" class="user.sqlService.JaxbXmlReader">
+        <property name="sqlmapFile" value="sqlmap.xml"></property>
+    </bean>
+
+    <bean id="sqlRegistry" class="user.sqlService.HashMapSqlRegistry"></bean>-->
+
     <bean id="sqlService" class="user.sqlService.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"></property>
         <property name="sqlmap" value="classpath:user/dao/sqlmap.xml"></property>
@@ -80,11 +83,19 @@
         <property name="contextPath" value="user.sqlService.jaxb"></property>
     </bean>
 
-    <bean id="sqlRegistry" class="user.sqlService.sqlRegistry.ConcurrentHashMapRegistry"></bean>
+    <!--<bean id="sqlRegistry" class="user.sqlService.sqlRegistry.ConcurrentHashMapRegistry"></bean>-->
+
+    <bean id="sqlRegistry" class="user.sqlService.sqlRegistry.EmbeddedDbSqlRegistry">
+        <property name="dataSource" ref="embeddedDatabase"></property>
+    </bean>
 
     <bean id="sqlAdminService" class="user.sqlService.SqlAdminService">
         <property name="updatableSqlRegistry" ref="sqlRegistry"></property>
     </bean>
+
+    <jdbc:embedded-database id="embeddedDatabase" type="HSQL">
+        <jdbc:script location="user/sqlService/sqlRegistry/sqlRegistrySchema.sql"></jdbc:script>
+    </jdbc:embedded-database>
 
 </beans>
 
