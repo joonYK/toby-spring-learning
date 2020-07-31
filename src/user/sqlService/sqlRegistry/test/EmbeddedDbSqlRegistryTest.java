@@ -50,9 +50,7 @@ public class EmbeddedDbSqlRegistryTest extends AbstractUpdatableSqlRegistryTest 
 
         try {
             sqlRegistry.updateSql(sqlmap);
-        } catch (SqlUpdateFailureException e) {
-            e.printStackTrace();
-        }
+        } catch (SqlUpdateFailureException e) {}
 
         //롤백되었는지 다시 확인.
         checkFindResult("SQL1", "SQL2", "SQL3");

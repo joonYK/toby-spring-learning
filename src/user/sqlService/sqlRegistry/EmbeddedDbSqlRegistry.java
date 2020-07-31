@@ -2,6 +2,10 @@ package user.sqlService.sqlRegistry;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import user.sqlService.exception.SqlNotFoundException;
 import user.sqlService.exception.SqlUpdateFailureException;
 
@@ -11,8 +15,12 @@ import java.util.Map;
 public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
     private JdbcTemplate jdbcTemplate;
 
+    //JdbcTemplate과 트랜잭션을 동기화해주는 트랜잭션 템플릿. 멀티스레그 환경에서 공유 가능.
+    private TransactionTemplate transactionTemplate;
+
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
+        transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
     }
 
     @Override
@@ -24,9 +32,14 @@ public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
     @Override
     public void updateSql(Map<String, String> sqlmap) throws SqlUpdateFailureException {
-        for(Map.Entry<String, String> entry : sqlmap.entrySet()) {
-            updateSql(entry.getKey(), entry.getValue());
-        }
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                for(Map.Entry<String, String> entry : sqlmap.entrySet()) {
+                    updateSql(entry.getKey(), entry.getValue());
+                }
+            }
+        });
     }
 
     @Override
