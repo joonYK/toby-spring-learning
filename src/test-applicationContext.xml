@@ -43,35 +43,11 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
-    <!--<tx:advice id="transactionAdvice">
-        <tx:attributes>
-            <tx:method name="get*" read-only="true" timeout="30"/>
-            <tx:method name="*" />
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:config>
-        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
-    </aop:config>-->
-
     <!-- @Transactional 이 붙은 타입과 메서드에 트랜잭션 부가기능을 담은 프록시를 추가하도록 만들어주는 후처리기 등록-->
     <tx:annotation-driven />
 
     <!-- 코드의 애노테이션을 이용해서 부가적인 빈 설정 또는 초기화 작업을 해주는 후처리기를 등록 -->
-    <context:annotation-config/>
-
-    <!--<bean id="sqlService" class="user.sqlService.DefaultSqlService"></bean>-->
-
-    <!--<bean id="sqlService" class="user.sqlService.BaseSqlService">
-        <property name="sqlReader" ref="sqlReader"></property>
-        <property name="sqlRegistry" ref="sqlRegistry"></property>
-    </bean>
-
-    <bean id="sqlReader" class="user.sqlService.JaxbXmlReader">
-        <property name="sqlmapFile" value="sqlmap.xml"></property>
-    </bean>
-
-    <bean id="sqlRegistry" class="user.sqlService.HashMapSqlRegistry"></bean>-->
+    <!--<context:annotation-config/>-->
 
     <bean id="sqlService" class="user.sqlService.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"></property>
@@ -82,8 +58,6 @@
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="user.sqlService.jaxb"></property>
     </bean>
-
-    <!--<bean id="sqlRegistry" class="user.sqlService.sqlRegistry.ConcurrentHashMapRegistry"></bean>-->
 
     <bean id="sqlRegistry" class="user.sqlService.sqlRegistry.EmbeddedDbSqlRegistry">
         <property name="dataSource" ref="embeddedDatabase"></property>
