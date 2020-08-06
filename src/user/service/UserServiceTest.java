@@ -41,7 +41,7 @@ public class UserServiceTest {
     /**
      * 포인트컷의 클래스 필터에 선정되도록 이름을 ~ServiceImpl로 변경.
      */
-    static class TestUserService extends UserServiceImpl {
+    public static class TestUserService extends UserServiceImpl {
         //테스트 픽스처의 uers(3)의 id값을 고정시킴.
         private String id = "madnite1";
 

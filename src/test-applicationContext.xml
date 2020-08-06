@@ -23,7 +23,7 @@
         <property name="password" value="1234"></property>
     </bean>-->
 
-    <bean id="userDao" class="user.dao.UserDaoJdbc">
+    <!--<bean id="userDao" class="user.dao.UserDaoJdbc">
         <property name="sqlService" ref="sqlService"></property>
         <property name="dataSource" ref="dataSource"></property>
     </bean>
@@ -31,13 +31,11 @@
     <bean id="userService" class="user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"></property>
         <property name="mailSender" ref="mailSender"></property>
-    </bean>
+    </bean>-->
 
-    <bean id="mailSender" class="user.service.DummyMailSender">
+    <!--<bean id="mailSender" class="user.service.DummyMailSender">
         <property name="host" value="mail.server.com"></property>
-    </bean>
-
-    <bean id="testUserService" class="user.service.UserServiceTest$TestUserService" parent="userService"></bean>
+    </bean>-->
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
@@ -45,9 +43,6 @@
 
     <!-- @Transactional 이 붙은 타입과 메서드에 트랜잭션 부가기능을 담은 프록시를 추가하도록 만들어주는 후처리기 등록-->
     <tx:annotation-driven />
-
-    <!-- 코드의 애노테이션을 이용해서 부가적인 빈 설정 또는 초기화 작업을 해주는 후처리기를 등록 -->
-    <!--<context:annotation-config/>-->
 
     <bean id="sqlService" class="user.sqlService.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"></property>
@@ -61,10 +56,6 @@
 
     <bean id="sqlRegistry" class="user.sqlService.sqlRegistry.EmbeddedDbSqlRegistry">
         <property name="dataSource" ref="embeddedDatabase"></property>
-    </bean>
-
-    <bean id="sqlAdminService" class="user.sqlService.SqlAdminService">
-        <property name="updatableSqlRegistry" ref="sqlRegistry"></property>
     </bean>
 
     <jdbc:embedded-database id="embeddedDatabase" type="HSQL">
