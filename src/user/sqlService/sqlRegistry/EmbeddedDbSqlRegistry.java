@@ -1,5 +1,6 @@
 package user.sqlService.sqlRegistry;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -18,9 +19,11 @@ public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
     //JdbcTemplate과 트랜잭션을 동기화해주는 트랜잭션 템플릿. 멀티스레그 환경에서 공유 가능.
     private TransactionTemplate transactionTemplate;
 
-    public void setDataSource(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+
+    @Autowired
+    public void setDataSource(DataSource embeddedDatabase) {
+        jdbcTemplate = new JdbcTemplate(embeddedDatabase);
+        transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(embeddedDatabase));
     }
 
     @Override

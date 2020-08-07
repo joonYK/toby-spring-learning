@@ -1,6 +1,7 @@
 package user;
 
 import com.mysql.cj.jdbc.Driver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -41,27 +42,24 @@ public class TestApplicationContext {
         return dataSource;
     }
 
+    @Autowired
+    DataSource dataSource;
+
     @Bean
     public PlatformTransactionManager transactionManager() {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-        transactionManager.setDataSource(dataSource());
+        transactionManager.setDataSource(dataSource);
         return transactionManager;
     }
 
     @Bean
     public UserDao userDao() {
-        UserDaoJdbc dao = new UserDaoJdbc();
-        dao.setDataSource(dataSource());
-        dao.setSqlService(sqlService());
-        return dao;
+        return new UserDaoJdbc();
     }
 
     @Bean
     public UserService userService() {
-        UserServiceImpl service = new UserServiceImpl();
-        service.setUserDao(userDao());
-        service.setMailSender(mailSender());
-        return service;
+        return new UserServiceImpl();
     }
 
     @Bean
@@ -73,24 +71,17 @@ public class TestApplicationContext {
     public UserService testUserService() {
         UserServiceTest.TestUserService testUserService = new UserServiceTest.TestUserService();
         testUserService.setMailSender(mailSender());
-
         return testUserService;
-
     }
 
     @Bean
     public SqlService sqlService() {
-        OxmSqlService sqlService = new OxmSqlService();
-        sqlService.setUnmarshaller(unmarshaller());
-        sqlService.setSqlRegistry(sqlRegistry());
-        return sqlService;
+        return new OxmSqlService();
     }
 
     @Bean
     public SqlRegistry sqlRegistry() {
-        EmbeddedDbSqlRegistry sqlRegistry = new EmbeddedDbSqlRegistry();
-        sqlRegistry.setDataSource(embeddedDatabase());
-        return sqlRegistry;
+        return  new EmbeddedDbSqlRegistry();
     }
 
     @Bean

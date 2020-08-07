@@ -1,5 +1,6 @@
 package user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import user.dao.UserDao;
@@ -13,8 +14,10 @@ public class UserServiceImpl implements UserService {
     public static final int MIN_LOGOUT_FOR_SILVER = 50;
     public static final int MIN_RECOMMEND_FOR_GOLD = 30;
 
+    @Autowired
     private UserDao userDao;
 
+    @Autowired
     private MailSender mailSender;
 
     public void setUserDao(UserDao userDao) {

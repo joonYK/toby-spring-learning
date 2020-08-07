@@ -1,5 +1,6 @@
 package user.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,11 +15,8 @@ import java.util.List;
 
 public class UserDaoJdbc implements UserDao {
 
+    @Autowired
     private SqlService sqlService;
-
-    public void setSqlService(SqlService sqlService) {
-        this.sqlService = sqlService;
-    }
 
     private JdbcTemplate jdbcTemplate;
 
@@ -38,6 +36,7 @@ public class UserDaoJdbc implements UserDao {
         }
     };
 
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }

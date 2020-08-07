@@ -1,5 +1,6 @@
 package user.sqlService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
@@ -23,10 +24,12 @@ public class OxmSqlService implements SqlService {
 
     private SqlRegistry sqlRegistry = new HashMapSqlRegistry();
 
+    @Autowired
     public void setSqlRegistry(SqlRegistry sqlRegistry) {
         this.sqlRegistry = sqlRegistry;
     }
 
+    @Autowired
     public void setUnmarshaller(Unmarshaller unmarshaller) {
         this.oxmSqlReader.setUnmarshaller(unmarshaller);
     }
