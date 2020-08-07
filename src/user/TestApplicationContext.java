@@ -3,6 +3,7 @@ package user;
 import com.mysql.cj.jdbc.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -29,6 +30,7 @@ import javax.sql.DataSource;
 @ContextConfiguration
 @EnableTransactionManagement
 //@ImportResource("/test-applicationContext.xml")
+@ComponentScan(basePackages = "user")
 public class TestApplicationContext {
 
     @Bean
@@ -50,11 +52,6 @@ public class TestApplicationContext {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
         transactionManager.setDataSource(dataSource);
         return transactionManager;
-    }
-
-    @Bean
-    public UserDao userDao() {
-        return new UserDaoJdbc();
     }
 
     @Bean
