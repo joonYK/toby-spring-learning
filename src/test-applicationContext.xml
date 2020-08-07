@@ -37,30 +37,30 @@
         <property name="host" value="mail.server.com"></property>
     </bean>-->
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <!--<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
-    </bean>
+    </bean>-->
 
     <!-- @Transactional 이 붙은 타입과 메서드에 트랜잭션 부가기능을 담은 프록시를 추가하도록 만들어주는 후처리기 등록-->
-    <tx:annotation-driven />
+    <!--<tx:annotation-driven />-->
 
-    <bean id="sqlService" class="user.sqlService.OxmSqlService">
+    <!--<bean id="sqlService" class="user.sqlService.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"></property>
         <property name="sqlmap" value="classpath:user/dao/sqlmap.xml"></property>
         <property name="sqlRegistry" ref="sqlRegistry"></property>
-    </bean>
+    </bean>-->
 
-    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <!--<bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="user.sqlService.jaxb"></property>
-    </bean>
+    </bean>-->
 
-    <bean id="sqlRegistry" class="user.sqlService.sqlRegistry.EmbeddedDbSqlRegistry">
+    <!--<bean id="sqlRegistry" class="user.sqlService.sqlRegistry.EmbeddedDbSqlRegistry">
         <property name="dataSource" ref="embeddedDatabase"></property>
-    </bean>
+    </bean>-->
 
-    <jdbc:embedded-database id="embeddedDatabase" type="HSQL">
+    <!--<jdbc:embedded-database id="embeddedDatabase" type="HSQL">
         <jdbc:script location="user/sqlService/sqlRegistry/sqlRegistrySchema.sql"></jdbc:script>
-    </jdbc:embedded-database>
+    </jdbc:embedded-database>-->
 
 </beans>
 
