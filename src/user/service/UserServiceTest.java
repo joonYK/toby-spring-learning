@@ -1,5 +1,6 @@
 package user.service;
 
+import context.TestAppContext;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import user.TestApplicationContext;
+import context.AppContext;
 import user.dao.UserDao;
 import user.domain.Level;
 import user.domain.User;
@@ -31,17 +32,14 @@ import static user.service.UserServiceImpl.MIN_LOGOUT_FOR_SILVER;
 import static user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "/test-applicationContext.xml")
-@ContextConfiguration(classes= TestApplicationContext.class)
+@ContextConfiguration(classes={AppContext.class, TestAppContext.class})
 public class UserServiceTest {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    /**
-     * 포인트컷의 클래스 필터에 선정되도록 이름을 ~ServiceImpl로 변경.
-     */
     public static class TestUserService extends UserServiceImpl {
+
         //테스트 픽스처의 uers(3)의 id값을 고정시킴.
         private String id = "madnite1";
 

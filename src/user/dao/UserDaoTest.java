@@ -1,5 +1,6 @@
 package user.dao;
 
+import context.TestAppContext;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,15 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import user.TestApplicationContext;
+import context.AppContext;
 import user.domain.Level;
 import user.domain.User;
 
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "/test-applicationContext.xml")
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes={AppContext.class, TestAppContext.class})
 public class UserDaoTest {
 
     @Autowired

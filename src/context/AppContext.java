@@ -1,4 +1,4 @@
-package user;
+package context;
 
 import com.mysql.cj.jdbc.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,8 @@ import javax.sql.DataSource;
 
 @ContextConfiguration
 @EnableTransactionManagement
-//@ImportResource("/test-applicationContext.xml")
 @ComponentScan(basePackages = "user")
-public class TestApplicationContext {
+public class AppContext {
 
     @Bean
     public DataSource dataSource() {
@@ -52,18 +51,6 @@ public class TestApplicationContext {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
         transactionManager.setDataSource(dataSource);
         return transactionManager;
-    }
-
-    @Bean
-    public MailSender mailSender() {
-         return new DummyMailSender();
-    }
-
-    @Bean
-    public UserService testUserService() {
-        UserServiceTest.TestUserService testUserService = new UserServiceTest.TestUserService();
-        testUserService.setMailSender(mailSender());
-        return testUserService;
     }
 
     @Bean
