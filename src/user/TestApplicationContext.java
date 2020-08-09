@@ -55,11 +55,6 @@ public class TestApplicationContext {
     }
 
     @Bean
-    public UserService userService() {
-        return new UserServiceImpl();
-    }
-
-    @Bean
     public MailSender mailSender() {
          return new DummyMailSender();
     }
