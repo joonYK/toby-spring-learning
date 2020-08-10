@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @ContextConfiguration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "user")
-@Import(SqlServiceContext.class)
+@Import({SqlServiceContext.class, TestAppContext.class, ProductionAppContext.class})
 public class AppContext {
 
     @Autowired
