@@ -30,17 +30,13 @@ public class SqlServiceContext {
     }
 
     @Bean
-    public SqlMapConfig sqlMapConfig() {
-        return new UserSqlMapConfig();
-    }
-
-    @Bean
     public SqlRegistry sqlRegistry() {
         return  new EmbeddedDbSqlRegistry();
     }
 
     @Bean
-    public Unmarshaller unmarshaller() {
+    public Unmarshaller unmarshaller()
+    {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setContextPath("user.sqlService.jaxb");
         return marshaller;
